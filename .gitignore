@@ -7,4 +7,5 @@ matmult_O3native
 *.perf
 perf.data*
 vec-report.txt
-!results/
+results/
+*.svg
