@@ -1,2 +1,10 @@
 matmult_O0
+matmult_O2
+matmult_O3
 matmult_O3native
+*.s
+*.folded
+*.perf
+perf.data*
+vec-report.txt
+!results/

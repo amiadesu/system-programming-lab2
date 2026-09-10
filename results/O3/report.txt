@@ -1,0 +1,65 @@
+########## matmult_O3native 1024 5
+дата : 2026-09-10T21:17:08+03:00
+хост : Linux 7.1.13-200.fc44.x86_64 x86_64
+CPU  : AMD Ryzen 7 4800H with Radeon Graphics
+gov  : powersave
+
+########## time-v
+	Command being timed: "./matmult_O3native 1024 5"
+	User time (seconds): 0.56
+	System time (seconds): 0.00
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.57
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 13912
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 3152
+	Voluntary context switches: 1
+	Involuntary context switches: 7
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+########## perf-stat
+
+ Performance counter stats for './matmult_O3native 1024 5' (3 runs):
+
+                 0      context-switches:u               #      0.0 cs/sec  cs_per_second     
+                 0      cpu-migrations:u                 #      0.0 migrations/sec  migrations_per_second
+              3133      page-faults:u                    #   5393.2 faults/sec  page_faults_per_second  ( +-  0.03% )
+            580.92 msec task-clock:u                     #      nan CPUs  CPUs_utilized         ( +-  1.28% )
+         344371720      L1-dcache-load-misses:u          #     15.9 %  l1d_miss_rate            ( +-  0.46% )  (42.73%)
+           2631603      branch-misses:u                  #      0.7 %  branch_miss_rate         ( +-  0.48% )  (42.73%)
+         356579761      branches:u                       #    613.8 M/sec  branch_frequency     ( +-  0.31% )  (42.85%)
+        2214575619      cpu-cycles:u                     #      3.8 GHz  cycles_frequency       ( +-  2.82% )  (42.95%)
+        2640289214      instructions:u                   #      1.2 instructions  insn_per_cycle  ( +-  0.46% )  (42.96%)
+          40778695      stalled-cycles-frontend:u        #     0.02 frontend_cycles_idle        ( +-  2.08% )  (42.95%)
+
+       0.582292267 +- 0.007458285 seconds time elapsed  ( +-  1.28% )
+
+
+########## perf-report
+    97.17%  matmult_O3nativ  matmult_O3native  [.] main
+     2.83%  matmult_O3nativ  matmult_O3native  [.] init_matrices
+     0.00%  matmult_O3nativ  [unknown]         [k] 0xffffffffaa8f5185
+     0.00%  matmult_O3nativ  [unknown]         [k] 0xffffffffaada2c3c
+     0.00%  matmult_O3nativ  [unknown]         [k] 0xffffffffabd55dec
+     0.00%  matmult_O3nativ  [unknown]         [k] 0xffffffffaa601280
+     0.00%  matmult_O3nativ  [unknown]         [k] 0xffffffffaa9adb05
+     0.00%  matmult_O3nativ  [unknown]         [k] 0xffffffffabd8a9dd
+
+########## energy
+t       = 0.603 с
+E_total = 13.02 Дж   (п.3.1)
+P_avg   = 21.60 Вт
+P_idle  = 5.54 Вт
+E_prog  = 9.69 Дж   (п.3.2)

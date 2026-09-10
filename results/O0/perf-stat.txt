@@ -1,0 +1,16 @@
+
+ Performance counter stats for './matmult_O0 1024 5' (3 runs):
+
+                 0      context-switches:u               #      0.0 cs/sec  cs_per_second     
+                 0      cpu-migrations:u                 #      0.0 migrations/sec  migrations_per_second
+              3135      page-faults:u                    #    190.3 faults/sec  page_faults_per_second  ( +-  0.04% )
+          16471.53 msec task-clock:u                     #      nan CPUs  CPUs_utilized         ( +-  0.75% )
+         355329004      L1-dcache-load-misses:u          #      0.3 %  l1d_miss_rate            ( +-  0.08% )  (42.85%)
+           5278306      branch-misses:u                  #      0.1 %  branch_miss_rate         ( +-  0.01% )  (42.85%)
+        5462785109      branches:u                       #    331.7 M/sec  branch_frequency     ( +-  0.02% )  (42.86%)
+       63361424371      cpu-cycles:u                     #      3.8 GHz  cycles_frequency       ( +-  0.07% )  (42.87%)
+      226123151047      instructions:u                   #      3.6 instructions  insn_per_cycle  ( +-  0.01% )  (42.87%)
+         131568982      stalled-cycles-frontend:u        #     0.00 frontend_cycles_idle        ( +-  0.80% )  (42.86%)
+
+      16.478870709 +- 0.123628412 seconds time elapsed  ( +-  0.75% )
+

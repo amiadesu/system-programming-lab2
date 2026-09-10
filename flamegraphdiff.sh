@@ -1,27 +1,36 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Диференціальний FlameGraph
+#   ./flamegraphdiff.sh <до> <після> <вихід.svg>
+#   приймає і perf.data, і готові .folded
+set -euo pipefail
+FG=${FG:-$HOME/FlameGraph}
 
 if [ "$#" -ne 3 ]; then
-    echo "Використання: $0 <perf_data_1> <perf_data_2> <output_file>"
-    echo "Приклад: $0 O0/perf.data O3/perf.data flame_diff.svg"
+    echo "Використання: $0 <до> <після> <output_file>"
+    echo "Приклад: $0 flame_O0.folded flame_O3.folded flame_diff.svg"
     exit 1
 fi
 
-INPUT_FILE_1="$1"
-INPUT_FILE_2="$2"
 OUTPUT_FILE="$3"
+TMP=()
+trap 'rm -f "${TMP[@]:-}"' EXIT
 
-FOLDED_1=$(mktemp)
-FOLDED_2=$(mktemp)
+fold() { # perf.data -> .folded, .folded -> як є
+    if [[ "$1" == *.folded ]]; then
+        echo "$1"
+    else
+        local t; t=$(mktemp); TMP+=("$t")
+        perf script -i "$1" | "$FG/stackcollapse-perf.pl" > "$t"
+        echo "$t"
+    fi
+}
 
-echo "Обробка першого файлу ($INPUT_FILE_1)..."
-perf script -i "$INPUT_FILE_1" | ~/FlameGraph/stackcollapse-perf.pl > "$FOLDED_1"
+F1=$(fold "$1")
+F2=$(fold "$2")
 
-echo "Обробка другого файлу ($INPUT_FILE_2)..."
-perf script -i "$INPUT_FILE_2" | ~/FlameGraph/stackcollapse-perf.pl > "$FOLDED_2"
+echo "до    : $1  ($(awk '{s+=$NF} END{print s+0}' "$F1") семплів)"
+echo "після : $2  ($(awk '{s+=$NF} END{print s+0}' "$F2") семплів)"
 
-echo "Генерація диференціального флеймграфа..."
-~/FlameGraph/difffolded.pl "$FOLDED_1" "$FOLDED_2" | ~/FlameGraph/flamegraph.pl > "$OUTPUT_FILE"
-
-rm "$FOLDED_1" "$FOLDED_2"
+"$FG/difffolded.pl" -n "$F1" "$F2" | "$FG/flamegraph.pl" > "$OUTPUT_FILE"
 
 echo "Готово! Диференціальний флеймграф збережено у $OUTPUT_FILE"
