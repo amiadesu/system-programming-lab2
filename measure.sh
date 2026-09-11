@@ -23,21 +23,44 @@ perf report -i "$OUT/perf.data" --stdio --no-children > "$OUT/perf-report.txt"
 
 # --- п.3 ---
 if (( ENERGY )); then
-  R=/sys/class/powercap/intel-rapl:0/energy_uj
-  if [[ -e $R ]] && sudo -v; then
-    rd(){ sudo cat "$R"; }
-    e0=$(rd); sleep 5; e1=$(rd); idle=$(( (e1-e0)/5 )) # мкВт
+  R=/sys/class/powercap/intel-rapl:0
+  RE=$R/energy_uj
+  RMAX=$R/max_energy_range_uj
+
+  if [[ -r $RMAX ]]; then
+    emax=$(cat "$RMAX")
+  else
+    emax=0 # 0 = "невідомо"
+  fi
+
+  # розрахунок ΔE з поправкою на можливість занулення файлу енергії протягом роботи програми
+  ediff() {
+    local a=$1 b=$2
+    if (( b >= a )); then
+      echo $(( b - a ))
+    elif (( emax > 0 )); then
+      echo $(( b - a + emax ))
+    else
+      echo 0 # ми нічого не знаємо про енергію, якщо опинилися тут
+    fi
+  }
+
+  if [[ -e $RE ]] && sudo -v; then
+    rd(){ sudo cat "$RE"; }
+    e0=$(rd); sleep 5; e1=$(rd)
+    idle=$(( $(ediff "$e0" "$e1") / 5 )) # мкВт
 
     e0=$(rd); t0=$(date +%s.%N)
     "$@" >/dev/null
     e1=$(rd); t1=$(date +%s.%N)
+    e=$(ediff "$e0" "$e1")
 
-    awk -v e=$((e1-e0)) -v i="$idle" -v t0="$t0" -v t1="$t1" 'BEGIN{
+    awk -v e="$e" -v i="$idle" -v t0="$t0" -v t1="$t1" 'BEGIN{
       t=t1-t0; E=e/1e6; Pi=i/1e6
       printf "t       = %.3f с\nE_total = %.2f Дж   (п.3.1)\nP_avg   = %.2f Вт\nP_idle  = %.2f Вт\nE_prog  = %.2f Дж   (п.3.2)\n", t,E,E/t,Pi,E-Pi*t
     }' > "$OUT/energy.txt"
   else
-    echo "RAPL недоступний (немає $R або відмовлено в sudo)" > "$OUT/energy.txt"
+    echo "RAPL недоступний (немає $RE або відмовлено в sudo)" > "$OUT/energy.txt"
   fi
 fi
 
