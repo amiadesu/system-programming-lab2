@@ -9,8 +9,8 @@ ENERGY=0
 [[ $# -eq 0 ]] && { echo "usage: $0 [-e] <програма> [аргументи]"; exit 1; }
 
 OUT=${OUT:-results/$(basename "$1")-$(date +%H%M%S)}
-BL=${BL:-10} # секунд на вимірювання фону
-COOL=${COOL:-15} # секунд на охолодження перед енергопрогоном
+BL=${BL:-5} # секунд на вимірювання фону
+COOL=${COOL:-5} # секунд на охолодження перед енергопрогоном
 mkdir -p "$OUT"
 
 # CPU=2 ./measure.sh ... -- прив'язати до ядра, прибирає міграції між ядрами
@@ -56,7 +56,6 @@ perf report -i "$OUT/perf.data" --stdio --no-children > "$OUT/perf-report.txt"
 
 # --- п.3, крок 2: прогін під навантаженням ----------------------------
 if (( ENERGY )) && (( HAVE_RAPL )); then
-  echo "[енергія] охолодження ${COOL} с..."
   sync; sleep "$COOL"
 
   e0=$(rd); t0=$(date +%s.%N)
