@@ -65,7 +65,7 @@ if (( ENERGY )) && (( HAVE_RAPL )); then
 
   awk -v e="$e" -v i="$idle" -v t0="$t0" -v t1="$t1" 'BEGIN{
     t=t1-t0; E=e/1e6; Pi=i/1e6; Ep=E-Pi*t
-    printf "t       = %.3f с\nE_total = %.2f Дж   (п.3.1)\nP_avg   = %.2f Вт\nP_idle  = %.2f Вт\nE_prog  = %.2f Дж   (п.3.2)\nEDP     = %.2f Дж*с\n", t,E,E/t,Pi,Ep,E*t
+    printf "t       = %.3f с\nE_total = %.2f Дж\nP_avg   = %.2f Вт\nP_idle  = %.2f Вт\nE_prog  = %.2f Дж\nEDP     = %.2f Дж*с\n", t,E,E/t,Pi,Ep,E*t
     if (Ep <= 0)
       printf "\nУВАГА: E_prog <= 0 -- P_idle завищений.\n       Закрийте фонові процеси, збільште COOL, повторіть.\n"
   }' > "$OUT/energy.txt"
